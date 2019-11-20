@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todoitemsapi-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: todoitemsapi-label
+    spec:
+      containers:
+      - name: todoitemsapi-deployment
+        image: todoitemsapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: "ASPNETCORE_ENVIRONMENT"
+          value: "Kubernetes"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoitemsapi-service
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 80
+  selector:
+    app: todoitemsapi-label
